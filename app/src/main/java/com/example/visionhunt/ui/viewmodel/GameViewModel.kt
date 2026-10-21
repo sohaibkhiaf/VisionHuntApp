@@ -1,15 +1,22 @@
 package com.example.visionhunt.ui.viewmodel
 
 import android.app.Application
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import com.example.visionhunt.data.CapturedItemDbHelper
 import com.example.visionhunt.data.CocoTasks
 import com.example.visionhunt.data.GameRepository
+import com.example.visionhunt.model.CapturedItem
 import com.example.visionhunt.model.Detection
 import com.example.visionhunt.model.GameProgress
 import com.example.visionhunt.model.GameState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.io.File
+import java.io.FileOutputStream
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -35,7 +42,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _isModelLoaded = MutableStateFlow(true)
     val isModelLoaded: StateFlow<Boolean> = _isModelLoaded.asStateFlow()
 
-    fun onDetectionsReceived(results: List<Detection>, inferenceTimeMs: Long) {
+    fun onDetectionsReceived(results: List<Detection>, inferenceTimeMs: Long, frameBitmap: Bitmap? = null, context: Context? = null) {
         _rawDetections.value = results
         _inferenceTime.value = inferenceTimeMs
         _inferenceError.value = null
@@ -52,10 +59,34 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _gameDetections.value = matchingTasks.map { it.second }
 
         var progressChanged = false
-        for ((task, _) in matchingTasks) {
+        val appContext = context?.applicationContext
+        val dbHelper = appContext?.let { CapturedItemDbHelper(it) }
+
+        for ((task, detection) in matchingTasks) {
             if (task.id !in currentCompleted) {
                 if (repository.completeTask(task.id)) {
                     progressChanged = true
+                    // Capture image and save to database
+                    if (appContext != null && frameBitmap != null) {
+                        try {
+                            val imgFile = File(appContext.filesDir, "capture_${task.id}_${System.currentTimeMillis()}.jpg")
+                            FileOutputStream(imgFile).use { out ->
+                                frameBitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                            }
+                            dbHelper?.insertItem(
+                                CapturedItem(
+                                    taskId = task.id,
+                                    taskNameAr = task.displayNameAr,
+                                    taskNameEn = task.displayNameEn,
+                                    imagePath = imgFile.absolutePath,
+                                    timestamp = System.currentTimeMillis(),
+                                    score = detection.score
+                                )
+                            )
+                        } catch (e: Exception) {
+                            Log.e("GameViewModel", "Error saving captured image", e)
+                        }
+                    }
                 }
             }
         }
@@ -70,11 +101,29 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _isModelLoaded.value = false
     }
 
-    fun resetGame() {
+    fun resetGame(context: Context? = null) {
         repository.resetGame()
         _gameProgress.value = repository.getProgress()
         _rawDetections.value = emptyList()
         _gameDetections.value = emptyList()
+
+        context?.let { ctx ->
+            try {
+                val dbHelper = CapturedItemDbHelper(ctx)
+                val items = dbHelper.getAllItems()
+                for (item in items) {
+                    try {
+                        val file = File(item.imagePath)
+                        if (file.exists()) file.delete()
+                    } catch (e: Exception) {
+                        Log.e("GameViewModel", "Error deleting image file", e)
+                    }
+                }
+                dbHelper.deleteAllItems()
+            } catch (e: Exception) {
+                Log.e("GameViewModel", "Error clearing captured database", e)
+            }
+        }
     }
 
     fun completeTask(taskId: String) {

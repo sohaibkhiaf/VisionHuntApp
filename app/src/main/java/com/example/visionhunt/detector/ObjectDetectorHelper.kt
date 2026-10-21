@@ -30,7 +30,8 @@ class ObjectDetectorHelper(
             results: List<Detection>,
             inferenceTime: Long,
             imageWidth: Int,
-            imageHeight: Int
+            imageHeight: Int,
+            frameBitmap: Bitmap? = null
         )
     }
 
@@ -164,7 +165,8 @@ class ObjectDetectorHelper(
                 results = detections,
                 inferenceTime = inferenceTime,
                 imageWidth = rotatedBitmap.width,
-                imageHeight = rotatedBitmap.height
+                imageHeight = rotatedBitmap.height,
+                frameBitmap = rotatedBitmap
             )
 
         } catch (e: Exception) {

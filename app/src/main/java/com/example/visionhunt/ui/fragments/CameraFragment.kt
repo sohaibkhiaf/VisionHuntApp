@@ -152,11 +152,12 @@ class CameraFragment : Fragment() {
                     results: List<Detection>,
                     inferenceTime: Long,
                     imageWidth: Int,
-                    imageHeight: Int
+                    imageHeight: Int,
+                    frameBitmap: android.graphics.Bitmap?
                 ) {
                     activity?.runOnUiThread {
                         if (_binding != null) {
-                            viewModel.onDetectionsReceived(results, inferenceTime)
+                            viewModel.onDetectionsReceived(results, inferenceTime, frameBitmap, context)
                         }
                     }
                 }

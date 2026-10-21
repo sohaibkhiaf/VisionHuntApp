@@ -1,5 +1,6 @@
 package com.example.visionhunt.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.visionhunt.data.CocoTasks
 import com.example.visionhunt.databinding.FragmentTasksBinding
 import com.example.visionhunt.ui.adapters.TasksAdapter
+import com.example.visionhunt.ui.screens.CapturedImagesActivity
 import com.example.visionhunt.ui.viewmodel.GameViewModel
 import kotlinx.coroutines.launch
 
@@ -48,6 +50,13 @@ class TasksFragment : Fragment() {
         binding?.btnStartCamera?.setOnClickListener(startCameraListener)
         binding?.btnStartCameraCard?.setOnClickListener(startCameraListener)
 
+        val galleryListener = View.OnClickListener {
+            val intent = Intent(requireContext(), CapturedImagesActivity::class.java)
+            startActivity(intent)
+        }
+        binding?.btnGallery?.setOnClickListener(galleryListener)
+        binding?.btnGalleryCard?.setOnClickListener(galleryListener)
+
         val resetGameListener = View.OnClickListener {
             showResetDialog()
         }
@@ -78,9 +87,9 @@ class TasksFragment : Fragment() {
             .setTitle("إعادة بدء اللعبة")
             .setMessage("هل أنت متأكد؟ سيتم مسح تقدمك الحالي والبدء من جديد.")
             .setPositiveButton("إعادة البدء") { _, _ ->
-                viewModel.resetGame()
+                viewModel.resetGame(requireContext())
             }
-            .setNegativeButton("إلغاء", null)
+            .setNegativeButton("لإلغاء", null)
             .show()
     }
 

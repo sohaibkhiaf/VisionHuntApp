@@ -33,6 +33,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.visionhunt.ui.screens.CapturedImagesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.VisionHunt"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>
