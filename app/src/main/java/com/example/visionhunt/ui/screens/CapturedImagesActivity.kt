@@ -3,6 +3,8 @@ package com.example.visionhunt.ui.screens
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.visionhunt.data.CapturedItemDbHelper
 import com.example.visionhunt.databinding.ActivityCapturedImagesBinding
@@ -19,12 +21,23 @@ class CapturedImagesActivity : AppCompatActivity() {
         binding = ActivityCapturedImagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val density = resources.displayMetrics.density
+        val basePadding = (16 * density).toInt()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                basePadding,
+                basePadding + systemBars.top,
+                basePadding,
+                basePadding + systemBars.bottom
+            )
+            insets
+        }
+
         dbHelper = CapturedItemDbHelper(this)
 
         binding.toolbarTitle.text = "الصور المكتشفة"
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
 
         binding.rvCaptured.layoutManager = LinearLayoutManager(this)
         binding.rvCaptured.adapter = adapter
