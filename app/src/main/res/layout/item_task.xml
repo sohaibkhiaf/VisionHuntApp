@@ -7,10 +7,10 @@
     android:layout_marginVertical="4dp"
     android:layoutDirection="rtl"
     android:textDirection="rtl"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="@color/task_card_background"
     app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
-    app:strokeColor="#E2E8F0"
+    app:strokeColor="@color/card_stroke"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -30,7 +30,7 @@
                 android:id="@+id/tv_title_ar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#0F172A"
+                android:textColor="@color/task_title_ar_color"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textColor="#64748B"
+                android:textColor="@color/task_text_color"
                 android:textSize="12sp" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#64748B"
+                android:textColor="@color/task_text_color"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -62,7 +62,7 @@
                 android:id="@+id/tv_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#15803D"
+                android:textColor="#16A34A"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:textColor="#64748B"
+                android:textColor="@color/task_text_color"
                 android:textSize="12sp" />
 
         </LinearLayout>

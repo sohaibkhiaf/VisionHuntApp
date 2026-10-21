@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.VisionHunt" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.VisionHunt" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#16A34A</item>
         <item name="colorPrimaryVariant">#166534</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorSecondary">#16A34A</item>
         <item name="colorOnSecondary">#FFFFFF</item>
-        <item name="android:windowBackground">#F8FAFC</item>
-        <item name="android:statusBarColor">#F8FAFC</item>
+        <item name="android:windowBackground">@color/screen_background</item>
+        <item name="android:statusBarColor">@color/screen_background</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:navigationBarColor">@color/bottom_nav_background</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>
