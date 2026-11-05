@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
+import com.example.visionhunt.data.CocoTasks
 import com.example.visionhunt.model.Detection
 
 class DetectionOverlayView @JvmOverloads constructor(
@@ -59,8 +60,12 @@ class DetectionOverlayView @JvmOverloads constructor(
             // Draw bounding box
             canvas.drawRect(left, top, right, bottom, boxPaint)
 
+            // Look up Arabic name from CocoTasks
+            val taskDef = CocoTasks.TASK_BY_LABEL[detection.label.trim().lowercase()]
+            val displayName = taskDef?.displayNameAr ?: detection.label
+
             // Draw label tag
-            val labelText = "${detection.label} ${(detection.score * 100).toInt()}%"
+            val labelText = "$displayName ${(detection.score * 100).toInt()}%"
             val textWidth = textPaint.measureText(labelText)
             val textHeight = textPaint.textSize
 

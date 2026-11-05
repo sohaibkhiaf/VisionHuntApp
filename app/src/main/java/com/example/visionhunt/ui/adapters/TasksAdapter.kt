@@ -1,10 +1,13 @@
 package com.example.visionhunt.ui.adapters
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.visionhunt.R
 import com.example.visionhunt.databinding.ItemTaskBinding
+import com.example.visionhunt.model.Rarity
 import com.example.visionhunt.model.TaskDefinition
 
 class TasksAdapter : RecyclerView.Adapter<TasksAdapter.TaskViewHolder>() {
@@ -29,22 +32,37 @@ class TasksAdapter : RecyclerView.Adapter<TasksAdapter.TaskViewHolder>() {
         val task = tasksList[position]
         val isCompleted = task.id in completedTaskIds
 
+        val context = holder.itemView.context
+        val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
         with(holder.binding) {
             tvTitleAr.text = task.displayNameAr
             tvTitleEn.text = task.displayNameEn
-            tvRarity.text = "الندرة: ${task.rarity.displayNameAr}"
+            tvRarity.text = "⚡ ${task.rarity.displayNameAr}"
+            val rarityColor = when (task.rarity) {
+                Rarity.COMMON -> if (isDarkTheme) Color.parseColor("#CBD5E1") else Color.parseColor("#475569")
+                Rarity.UNCOMMON -> if (isDarkTheme) Color.parseColor("#60A5FA") else Color.parseColor("#2563EB")
+                Rarity.RARE -> if (isDarkTheme) Color.parseColor("#FBBF24") else Color.parseColor("#D97706")
+            }
+            tvRarity.setTextColor(rarityColor)
             tvPoints.text = "+${task.points}"
 
             if (isCompleted) {
-                tvStatus.text = "✓ مكتمل"
+                ivStatusIcon.setImageResource(R.drawable.ic_checked)
+                ivStatusIcon.setColorFilter(Color.parseColor("#15803D"))
+                tvStatus.text = "مكتمل"
                 tvStatus.setTextColor(Color.parseColor("#15803D"))
-                cardTask.setCardBackgroundColor(Color.parseColor("#F0FDF4"))
-                cardTask.strokeColor = Color.parseColor("#86EFAC")
+
+                cardStatusBadge.setCardBackgroundColor(if (isDarkTheme) Color.parseColor("#064E3B") else Color.parseColor("#DCFCE7"))
+                cardTask.setBackgroundResource(R.drawable.bg_3d_task_completed)
             } else {
-                tvStatus.text = "○ لم يُكتشف"
+                ivStatusIcon.setImageResource(R.drawable.ic_unchecked)
+                ivStatusIcon.setColorFilter(Color.parseColor("#64748B"))
+                tvStatus.text = "لم يُكتشف"
                 tvStatus.setTextColor(Color.parseColor("#64748B"))
-                cardTask.setCardBackgroundColor(Color.WHITE)
-                cardTask.strokeColor = Color.parseColor("#E2E8F0")
+
+                cardStatusBadge.setCardBackgroundColor(if (isDarkTheme) Color.parseColor("#334155") else Color.parseColor("#F1F5F9"))
+                cardTask.setBackgroundResource(R.drawable.bg_3d_task_uncompleted)
             }
         }
     }

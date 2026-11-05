@@ -42,7 +42,8 @@ fun CameraPreview(
                     results: List<Detection>,
                     inferenceTime: Long,
                     imageWidth: Int,
-                    imageHeight: Int
+                    imageHeight: Int,
+                    frameBitmap: android.graphics.Bitmap?
                 ) {
                     onDetectionsReceived(results, inferenceTime)
                 }

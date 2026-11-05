@@ -1,160 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_refresh_camera"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screen_background"
-    android:layoutDirection="rtl"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:textDirection="rtl">
+    android:background="@color/screen_background">
 
-    <!-- Header -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:text="VISION HUNT"
-        android:textColor="#16A34A"
-        android:textSize="13sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginTop="2dp"
-        android:text="اكتشف الأشياء"
-        android:textColor="@color/text_primary"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginTop="2dp"
-        android:text="وجّه الكاميرا نحو الأشياء من حولك لاكتشافها."
-        android:textColor="@color/text_secondary"
-        android:textSize="14sp" />
-
-    <!-- Camera Preview Container -->
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:layout_marginTop="12dp"
-        app:cardBackgroundColor="#0F172A"
-        app:cardCornerRadius="18dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="0dp">
+        android:layout_height="match_parent"
+        android:layoutDirection="rtl"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:textDirection="rtl">
 
+        <!-- 3D Navigation Bar -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_3d_card_16dp"
+            android:layout_marginBottom="4dp">
 
-            <androidx.camera.view.PreviewView
-                android:id="@+id/preview_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <com.example.visionhunt.ui.views.DetectionOverlayView
-                android:id="@+id/detection_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <!-- Camera Status Badge -->
             <TextView
-                android:id="@+id/tv_badge"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|start"
-                android:layout_margin="12dp"
-                android:background="#CC0F172A"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:text="الكشف نشط"
-                android:textColor="#86EFAC"
-                android:textSize="12sp"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="16dp"
+                android:text="اكتشف الأشياء 📷"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
                 android:textStyle="bold" />
-
         </FrameLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="2dp"
+            android:text="وجّه الكاميرا نحو الأشياء من حولك لاكتشافها."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
 
-    <!-- Info Card -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_weight="1">
-
+        <!-- Camera Preview Container -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            android:layout_height="320dp"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#0F172A"
+            app:cardCornerRadius="18dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            app:strokeWidth="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/preview_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.example.visionhunt.ui.views.DetectionOverlayView
+                    android:id="@+id/detection_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <!-- Camera Status Badge Container -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_3d_badge">
+
+                    <TextView
+                        android:id="@+id/tv_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="8dp"
+                        android:text="الكشف نشط"
+                        android:textColor="#86EFAC"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+                <!-- Flashlight 3D Button -->
+                <FrameLayout
+                    android:id="@+id/btn_flashlight_card"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_3d_btn_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_flashlight"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="2dp"
+                        android:contentDescription="تشغيل الفلاش"
+                        android:src="@drawable/ic_flashlight"
+                        app:tint="#166534" />
+                </FrameLayout>
+
+                <!-- Success Floating Banner -->
+                <FrameLayout
+                    android:id="@+id/card_success_banner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_margin="16dp"
+                    android:alpha="0"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_3d_success_banner">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="14dp">
+
+                        <TextView
+                            android:id="@+id/tv_success_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Real-time Stats Card -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_3d_card_16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:text="حالة نظام الكشف"
+                    android:text="إحصائيات المشهد الحالي"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_model_status"
+                    android:id="@+id/tv_total_detected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginTop="4dp"
-                    android:text="تم تحميل EfficientDet-Lite3 بنجاح."
-                    android:textColor="@color/text_muted"
-                    android:textSize="13sp" />
+                    android:layout_marginTop="12dp"
+                    android:text="إجمالي الأشياء المكتشفة: 0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_detected_count"
+                    android:id="@+id/tv_high_confidence"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginTop="4dp"
-                    android:text="الأجسام المكتشفة للكاميرا: 0"
-                    android:textColor="@color/text_muted"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_matched_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginTop="4dp"
-                    android:text="الأجسام المطابقة للشرط (85%+): 0"
-                    android:textColor="@color/text_muted"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_task_status_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/text_muted"
-                    android:textSize="13sp" />
+                    android:text="الأشياء ذات دقة عالية (>85%): 0"
+                    android:textColor="#15803D"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

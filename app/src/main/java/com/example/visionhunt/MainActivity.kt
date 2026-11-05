@@ -2,11 +2,14 @@ package com.example.visionhunt
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.visionhunt.databinding.ActivityMainBinding
 import com.example.visionhunt.ui.fragments.CameraFragment
 import com.example.visionhunt.ui.fragments.TasksFragment
+import com.example.visionhunt.util.GameToast
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,9 +27,12 @@ class MainActivity : AppCompatActivity() {
         CameraFragment()
     }
 
+    private var backPressedTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         super.onCreate(savedInstanceState)
+
         supportActionBar?.hide()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -49,6 +55,21 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.bottomNavigation.selectedItemId != R.id.nav_tasks) {
+                    binding.bottomNavigation.selectedItemId = R.id.nav_tasks
+                } else {
+                    if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                        finish()
+                    } else {
+                        GameToast.show(this@MainActivity, "اضغط مرة أخرى للخروج", Toast.LENGTH_SHORT)
+                        backPressedTime = System.currentTimeMillis()
+                    }
+                }
+            }
+        })
     }
 
     private fun loadFragment(fragment: Fragment) {

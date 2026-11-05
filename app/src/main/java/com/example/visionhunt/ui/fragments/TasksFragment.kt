@@ -63,6 +63,10 @@ class TasksFragment : Fragment() {
         binding?.btnResetGame?.setOnClickListener(resetGameListener)
         binding?.btnResetGameCard?.setOnClickListener(resetGameListener)
 
+        binding?.swipeRefresh?.setOnRefreshListener {
+            binding?.swipeRefresh?.isRefreshing = false
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -70,6 +74,7 @@ class TasksFragment : Fragment() {
                         binding?.let { b ->
                             b.tvScore.text = "${progress.score}"
                             b.tvProgress.text = "المهام المكتملة: ${progress.completedCount}/${progress.totalTasks}"
+                            b.tvProgress.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -89,7 +94,7 @@ class TasksFragment : Fragment() {
             .setPositiveButton("إعادة البدء") { _, _ ->
                 viewModel.resetGame(requireContext())
             }
-            .setNegativeButton("لإلغاء", null)
+            .setNegativeButton("إلغاء", null)
             .show()
     }
 
@@ -98,3 +103,4 @@ class TasksFragment : Fragment() {
         _binding = null
     }
 }
+

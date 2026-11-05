@@ -35,6 +35,17 @@ class GameRepository(context: Context) {
         return true
     }
 
+    fun getScore(): Int {
+        val completedSet = _gameState.value.completedTaskIds
+        var score = 0
+        for (task in CocoTasks.GAME_TASKS) {
+            if (task.id in completedSet) {
+                score += task.points
+            }
+        }
+        return score
+    }
+
     fun resetGame() {
         prefs.edit().remove(KEY_COMPLETED_TASKS).apply()
         _gameState.value = GameState(version = 1, completedTaskIds = emptySet())
@@ -44,9 +55,7 @@ class GameRepository(context: Context) {
         val completedSet = state.completedTaskIds
         val tasks = CocoTasks.GAME_TASKS
 
-        val score = tasks.sumOf { task ->
-            if (task.id in completedSet) task.points else 0
-        }
+        val score = getScore()
         val completedCount = tasks.count { it.id in completedSet }
         val totalTasks = tasks.size
         val isCompleted = totalTasks > 0 && completedCount == totalTasks
@@ -64,3 +73,4 @@ class GameRepository(context: Context) {
         private const val KEY_COMPLETED_TASKS = "@vision_hunt/completed_tasks"
     }
 }
+

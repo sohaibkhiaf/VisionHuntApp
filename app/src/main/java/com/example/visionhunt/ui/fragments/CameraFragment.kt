@@ -19,11 +19,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.visionhunt.data.CocoTasks
 import com.example.visionhunt.databinding.FragmentCameraBinding
 import com.example.visionhunt.detector.ObjectDetectorHelper
 import com.example.visionhunt.model.Detection
-import com.example.visionhunt.model.TaskDefinition
 import com.example.visionhunt.ui.viewmodel.GameViewModel
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
@@ -37,8 +35,8 @@ class CameraFragment : Fragment() {
     private val viewModel: GameViewModel by activityViewModels()
     private var cameraExecutor: ExecutorService? = null
     private var detectorHelper: ObjectDetectorHelper? = null
-
-    private var activePageTasks: List<TaskDefinition>? = null
+    private var cameraControl: androidx.camera.core.CameraControl? = null
+    private var isFlashlightOn = false
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -47,7 +45,7 @@ class CameraFragment : Fragment() {
             startCamera()
         } else {
             context?.let {
-                Toast.makeText(it, "نحتاج إلى إذن الكاميرا لتشغيل الكشف", Toast.LENGTH_SHORT).show()
+                com.example.visionhunt.util.GameToast.show(it, "نحتاج إلى إذن الكاميرا لتشغيل الكشف", Toast.LENGTH_SHORT)
             }
         }
     }
@@ -66,9 +64,6 @@ class CameraFragment : Fragment() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        val currentCompletedIds = viewModel.gameState.value.completedTaskIds
-        activePageTasks = CocoTasks.GAME_TASKS.filter { it.id !in currentCompletedIds }
-
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED
         ) {
@@ -77,20 +72,30 @@ class CameraFragment : Fragment() {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
+        binding?.btnFlashlightCard?.setOnClickListener {
+            isFlashlightOn = !isFlashlightOn
+            cameraControl?.enableTorch(isFlashlightOn)
+            
+            val tintColor = if (isFlashlightOn) android.graphics.Color.parseColor("#F59E0B") else android.graphics.Color.parseColor("#166534")
+            binding?.ivFlashlight?.setColorFilter(tintColor)
+        }
+
+        binding?.swipeRefreshCamera?.setOnRefreshListener {
+            binding?.swipeRefreshCamera?.isRefreshing = false
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.rawDetections.collect { detections ->
                         binding?.let { b ->
                             b.detectionOverlay.updateDetections(detections)
-                            b.tvDetectedCount.text = "الأجسام المكتشفة للكاميرا: ${detections.size}"
-                        }
-                    }
-                }
-                launch {
-                    viewModel.gameDetections.collect { gameDetections ->
-                        binding?.let { b ->
-                            b.tvMatchedCount.text = "الأجسام المطابقة للشرط (85%+): ${gameDetections.size}"
+                            
+                            val totalDetected = detections.size
+                            val highConfidence = detections.count { it.score >= 0.85f }
+                            
+                            b.tvTotalDetected.text = "إجمالي الأشياء المكتشفة: $totalDetected"
+                            b.tvHighConfidence.text = "الأشياء ذات دقة عالية (>85%): $highConfidence"
                         }
                     }
                 }
@@ -102,37 +107,34 @@ class CameraFragment : Fragment() {
                     }
                 }
                 launch {
-                    viewModel.gameState.collect { state ->
-                        binding?.let {
-                            updateTasksStatusList(state.completedTaskIds)
+                    viewModel.itemDetectedSuccessEvent.collect { pair ->
+                        if (pair != null) {
+                            val (taskNameAr, points) = pair
+                            binding?.let { b ->
+                                b.tvSuccessMessage.text = "🎉 تم اكتشاف: $taskNameAr (+${points} نقطة)"
+                                b.cardSuccessBanner.visibility = View.VISIBLE
+                                b.cardSuccessBanner.animate()
+                                    .alpha(1f)
+                                    .setDuration(300)
+                                    .withEndAction {
+                                        b.cardSuccessBanner.postDelayed({
+                                            b.cardSuccessBanner.animate()
+                                                .alpha(0f)
+                                                .setDuration(400)
+                                                .withEndAction {
+                                                    b.cardSuccessBanner.visibility = View.GONE
+                                                    viewModel.resetItemDetectedSuccessEvent()
+                                                }
+                                                .start()
+                                        }, 2200)
+                                    }
+                                    .start()
+                            }
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun updateTasksStatusList(completedIds: Set<String>) {
-        val b = binding ?: return
-
-        if (activePageTasks == null) {
-            activePageTasks = CocoTasks.GAME_TASKS.filter { it.id !in completedIds }
-        }
-
-        val tasksToShow = activePageTasks ?: emptyList()
-
-        val sb = StringBuilder()
-        if (tasksToShow.isEmpty()) {
-            sb.append("تهانينا! جميع المهام مكتملة 🎉\n")
-        } else {
-            sb.append("قائمة المهام غير المكتملة:\n")
-            tasksToShow.forEach { task ->
-                val isDone = task.id in completedIds
-                val statusStr = if (isDone) "✓ مكتمل (+${task.points})" else "○ لم يُكتشف بعد"
-                sb.append("• ").append(task.displayNameAr).append(": ").append(statusStr).append("\n")
-            }
-        }
-        b.tvTaskStatusList.text = sb.toString()
     }
 
     private fun startCamera() {
@@ -144,7 +146,7 @@ class CameraFragment : Fragment() {
             detectorListener = object : ObjectDetectorHelper.DetectorListener {
                 override fun onError(error: String) {
                     activity?.runOnUiThread {
-                        binding?.tvModelStatus?.text = "خطأ النموذج: $error"
+                        Log.e("CameraFragment", "Model error: $error")
                     }
                 }
 
@@ -189,12 +191,15 @@ class CameraFragment : Fragment() {
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,
                     preview,
                     imageAnalysis
                 )
+                
+                cameraControl = camera.cameraControl
+                
             } catch (e: Exception) {
                 Log.e("CameraFragment", "Camera binding failed", e)
             }
@@ -214,7 +219,6 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        activePageTasks = null
         detectorHelper?.clearObjectDetector()
         detectorHelper = null
         cameraExecutor?.shutdown()
@@ -222,3 +226,4 @@ class CameraFragment : Fragment() {
         _binding = null
     }
 }
+
