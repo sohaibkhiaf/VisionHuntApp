@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_refresh_camera"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="rtl"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:textDirection="rtl">
+
+        <!-- 3D Navigation Bar -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_3d_card_16dp"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="16dp"
+                android:text="اكتشف الأشياء 📷"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="2dp"
+            android:text="وجّه الكاميرا نحو الأشياء من حولك لاكتشافها."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <!-- Camera Preview Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#0F172A"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/preview_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.example.visionhunt.ui.views.DetectionOverlayView
+                    android:id="@+id/detection_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <!-- Camera Status Badge Container -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_3d_badge">
+
+                    <TextView
+                        android:id="@+id/tv_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="8dp"
+                        android:text="الكشف نشط"
+                        android:textColor="#86EFAC"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+                <!-- Flashlight 3D Button -->
+                <FrameLayout
+                    android:id="@+id/btn_flashlight_card"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_3d_btn_circle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_flashlight"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="2dp"
+                        android:contentDescription="تشغيل الفلاش"
+                        android:src="@drawable/ic_flashlight"
+                        app:tint="#166534" />
+                </FrameLayout>
+
+                <!-- Success Floating Banner -->
+                <FrameLayout
+                    android:id="@+id/card_success_banner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_margin="16dp"
+                    android:alpha="0"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_3d_success_banner">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="14dp">
+
+                        <TextView
+                            android:id="@+id/tv_success_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Real-time Stats Card -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_3d_card_16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="إحصائيات المشهد الحالي"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_total_detected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="إجمالي الأشياء المكتشفة: 0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_high_confidence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="الأشياء ذات دقة عالية (>85%): 0"
+                    android:textColor="#15803D"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
